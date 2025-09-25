@@ -1,0 +1,24 @@
+{
+  "name": "Image Defect Detection",
+  "description": "FastAPI backend for image defect detection",
+  "repository": "https://github.com/hardik1511/image-defect-detection",
+  "keywords": ["python", "fastapi", "pytorch", "computer-vision"],
+  "stack": "heroku-20",
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "env": {
+    "PYTHONPATH": {
+      "description": "Python path for backend",
+      "value": "backend"
+    }
+  }
+}

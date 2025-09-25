@@ -55,6 +55,27 @@ image-defect-detection/
 
 ## Deploy for Free
 
+### 🚀 **FASTEST: Replit (Both services in 2 minutes)**
+
+1. Go to [Replit.com](https://replit.com) → Sign up
+2. Click **"Create Repl"** → **"Import from GitHub"**
+3. Paste: `https://github.com/hardik1511/image-defect-detection`
+4. Click **"Import"** and wait for setup
+5. **Backend runs automatically** on port 5000
+6. **Frontend**: Open another tab → `https://replit.com/new` → Import same repo → Set root to `frontend`
+7. **Done!** Both services running
+
+### 🔥 **EASIEST: Heroku (No Docker needed)**
+
+**Backend on Heroku:**
+1. Go to [Heroku.com](https://heroku.com) → Sign up
+2. Click **"New"** → **"Create new app"**
+3. Connect GitHub → Select your repo
+4. **Enable auto-deploy** from main branch
+5. **Deploy!** (Uses `Procfile` automatically)
+
+**Frontend on Netlify:** (Same as below)
+
 ### Option 1: Railway (Backend) + Netlify (Frontend)
 
 **Backend on Railway:**
