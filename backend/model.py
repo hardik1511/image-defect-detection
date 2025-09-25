@@ -33,16 +33,15 @@ def load_model():
         return _model
 
     _device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = _build_model()
-
-    # load your fine-tuned weights
-    if not os.path.exists(WEIGHTS_PATH):
-        raise FileNotFoundError(
-            f"Defect model weights not found at '{WEIGHTS_PATH}'. "
-            "Place maskrcnn_defect.pth beside model.py or set DEFECT_WEIGHTS env var."
-        )
-    state = torch.load(WEIGHTS_PATH, map_location="cpu")
-    model.load_state_dict(state, strict=True)
+    
+    # Try to load custom weights, fallback to pretrained COCO model
+    if os.path.exists(WEIGHTS_PATH):
+        model = _build_model()
+        state = torch.load(WEIGHTS_PATH, map_location="cpu")
+        model.load_state_dict(state, strict=True)
+    else:
+        # Use pretrained COCO model as fallback
+        model = torchvision.models.detection.maskrcnn_resnet50_fpn(weights="DEFAULT")
 
     model.eval().to(_device)
     _model = model
