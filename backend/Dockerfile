@@ -18,14 +18,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # Copy requirement files first for better caching
-COPY requirements.txt ./
+COPY backend/requirements.txt ./
 
 # Install python deps (CPU-only PyTorch per requirements.txt)
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt
 
 # Copy application code and model weights
-COPY . .
+COPY backend/ .
 
 # Expose port for Uvicorn
 EXPOSE 8000
