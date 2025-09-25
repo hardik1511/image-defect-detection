@@ -53,15 +53,52 @@ image-defect-detection/
    └─ README.md
 ```
 
-## Deploy on Render
+## Deploy for Free
 
-1. Push this repository to GitHub.
-2. In Render, choose New → Blueprint and select this repo.
-3. The blueprint `render.yaml` defines:
-   - Backend: Docker web service built from `backend/Dockerfile`, port 8000.
-   - Frontend: Static site built from `frontend`, publish path `frontend/dist`.
-4. After the first deploy, copy the backend public URL and set it as `VITE_API_BASE` env var on the frontend service. Redeploy the frontend.
-5. Verify health at `<backend-url>/health` and then test the UI.
+### Option 1: Railway (Backend) + Netlify (Frontend)
+
+**Backend on Railway:**
+1. Go to [Railway.app](https://railway.app) and sign up with GitHub
+2. Click "New Project" → "Deploy from GitHub repo"
+3. Select your `image-defect-detection` repository
+4. Railway will auto-detect the `railway.json` config and deploy the backend
+5. Copy the backend URL (e.g., `https://your-app.railway.app`)
+
+**Frontend on Netlify:**
+1. Go to [Netlify.com](https://netlify.com) and sign up
+2. Click "New site from Git" → Connect GitHub
+3. Select your repository
+4. Set build settings:
+   - **Base directory**: `frontend`
+   - **Build command**: `npm ci && npm run build`
+   - **Publish directory**: `frontend/dist`
+5. Add environment variable: `VITE_API_BASE` = `your-railway-backend-url`
+6. Deploy!
+
+### Option 2: Railway (Backend) + Vercel (Frontend)
+
+**Backend on Railway:** (Same as above)
+
+**Frontend on Vercel:**
+1. Go to [Vercel.com](https://vercel.com) and sign up with GitHub
+2. Click "New Project" → Import your repository
+3. Set **Root Directory** to `frontend`
+4. Add environment variable: `VITE_API_BASE` = `your-railway-backend-url`
+5. Deploy!
+
+### Option 3: All on Railway (Both services)
+
+1. Deploy backend as above
+2. For frontend, create a new Railway service:
+   - **Source**: Same GitHub repo
+   - **Root Directory**: `frontend`
+   - **Build Command**: `npm ci && npm run build`
+   - **Start Command**: `npx serve -s dist -l 3000`
+   - **Environment**: `VITE_API_BASE` = `your-backend-url`
+
+### Verify Deployment
+- Backend health: `https://your-backend-url/health`
+- Frontend: Visit your frontend URL and test image upload
 
 ## License
 MIT (adjust as needed)
