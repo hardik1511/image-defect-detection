@@ -1,0 +1,20 @@
+Screenshots & Captions
+======================
+
+(1) Home / Upload
+    Caption: "Upload an exhibit image and set detection parameters (threshold, mask opacity)."
+
+(2) Detection Overlay
+    Caption: "Detected defects highlighted using color-coded masks and bounding boxes."
+
+(3) Defects Panel
+    Caption: "Detailed list of each defect with color, label, confidence, size and area; click Focus to zoom."
+
+(4) Export CSV/JSON
+    Caption: "Exporting detection results to CSV/JSON for conservation records and QA traceability."
+
+(5) Health Endpoint (optional)
+    Caption: "FastAPI /health endpoint confirming the backend service is live."
+
+(6) API Response (optional)
+    Caption: "Successful /predict response showing instances (bbox, score, polygon)."

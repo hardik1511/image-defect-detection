@@ -1,0 +1,23 @@
+@startuml
+skinparam backgroundColor #0b0f19
+skinparam componentStyle rectangle
+skinparam RectangleBackgroundColor #101a2f
+skinparam RectangleBorderColor #4b5563
+skinparam ArrowColor #93c5fd
+skinparam DefaultFontColor #e5e7eb
+title DFD Level 1 – Core Data Flow
+
+actor "Conservator" as CONS
+rectangle "React Frontend" as FE
+rectangle "FastAPI Backend" as BE
+rectangle "Mask R-CNN Model" as NN
+database "Exports (CSV/JSON)" as DB
+
+CONS --> FE : Upload Image
+FE --> BE : POST /predict (image)
+BE --> NN : Preprocess image
+NN --> BE : Detections (masks, boxes, scores)
+BE --> FE : JSON response\n+ preview image
+FE --> CONS : Overlays + Defects Panel
+FE --> DB : Save CSV/JSON
+@enduml

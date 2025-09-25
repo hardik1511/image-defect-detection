@@ -1,0 +1,28 @@
+@startuml namespace "Use Case 3 : Automated Inspection (Assembly Line)"
+skinparam backgroundColor #0b0f19
+skinparam usecase { BackgroundColor #101a2f; BorderColor #4b5563; FontColor #e5e7eb }
+skinparam actor   { BackgroundColor #0b1220; BorderColor #64748b; FontColor #e5e7eb }
+left to right direction
+title Use Case 3 – Automated Inspection (Assembly Line)
+
+actor "Inspection Camera" as CAM
+actor "Manufacturing Supervisor" as SUP
+
+rectangle "Defect Detection System" {
+  (UC3.1 Real-time image ingestion) as C1
+  (UC3.2 Run inference per unit) as C2
+  (UC3.3 Auto flag/mark defective item) as C3
+  (UC3.4 Supervisor reviews defects) as C4
+  (UC3.5 Export CSV/JSON summary) as C5
+  (UC3.6 Adjust threshold policy) as C6
+}
+
+CAM -- C1
+C1 --> C2
+C2 --> C3
+SUP -- C4
+SUP -- C5
+SUP -- C6
+C3 ..> C4 : <<notify>>
+C4 .> C5 : <<extend>>
+@enduml

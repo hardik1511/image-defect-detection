@@ -1,0 +1,26 @@
+@startuml
+skinparam backgroundColor #0b0f19
+left to right direction
+title Use Case 2 – Preservation of Art (Paintings/Artifacts)
+
+actor "Museum Conservator" as CONS
+rectangle "Defect Detection System" {
+  (UC2.1 Upload artwork image) as B1
+  (UC2.2 Run Mask R-CNN inference) as B2
+  (UC2.3 Review scratches/paint loss/stains) as B3
+  (UC2.4 Focus zoom on selected defect) as B4
+  (UC2.5 Export report CSV/JSON) as B5
+  (UC2.6 Adjust threshold/opacity) as B6
+}
+
+CONS -- B1
+CONS -- B3
+CONS -- B4
+CONS -- B5
+CONS -- B6
+B1 --> B2
+B2 --> B3
+B3 .> B6 : <<extend>>
+B3 .> B4 : <<extend>>
+B3 .> B5 : <<extend>>
+@enduml

@@ -1,0 +1,61 @@
+@startuml
+skinparam backgroundColor #0b0f19
+skinparam handwritten false
+skinparam RoundCorner 14
+skinparam Shadowing false
+skinparam usecase {
+  BackgroundColor #101a2f
+  BorderColor #4b5563
+  ArrowColor #93c5fd
+  FontColor #e5e7eb
+}
+skinparam actor {
+  BackgroundColor #0b1220
+  BorderColor #64748b
+  FontColor #e5e7eb
+}
+
+left to right direction
+title Image Defect Detection – Overall Use Cases
+
+actor "QC Engineer" as QC
+actor "Conservator" as CONS
+actor "Manufacturing\nSupervisor" as SUP
+actor "Inspection Camera" as CAM
+
+rectangle "Defect Detection System" as SYS {
+  (Upload Image) as U1
+  (Run Inference) as U2
+  (View Detected Defects) as U3
+  (Adjust Threshold/Opacity) as U4
+  (Focus & Inspect Defect) as U5
+  (Export CSV/JSON) as U6
+  (Real-time Ingestion) as U7
+  (Auto Flag/Mark Item) as U8
+}
+
+QC -- U1
+QC -- U3
+QC -- U6
+QC -- U5
+QC -- U4
+
+CONS -- U1
+CONS -- U3
+CONS -- U5
+CONS -- U6
+CONS -- U4
+
+CAM -- U7
+SUP -- U3
+SUP -- U8
+SUP -- U6
+
+U2 .u.> U3 : <<include>>
+U3 .d.> U5 : <<extend>>\n(on selected defect)
+U3 .d.> U4 : <<extend>>\n(tune visibility)
+U3 .d.> U6 : <<extend>>\n(reporting)
+U7 .r.> U2 : <<triggers>>
+U2 .d.> U8 : <<extend>>\n(if defect > threshold)
+
+@enduml

@@ -1,0 +1,24 @@
+@startuml
+skinparam backgroundColor #0b0f19
+skinparam sequenceArrowColor #93c5fd
+skinparam ParticipantBackgroundColor #101a2f
+skinparam ParticipantBorderColor #4b5563
+skinparam ParticipantFontColor #e5e7eb
+skinparam SequenceLifeLineBorderColor #64748b
+
+title Sequence – Manual Inspection Flow (Gallery Exhibit)
+
+actor CONS as "Conservator"
+participant UI as "React UI"
+participant API as "FastAPI Backend"
+participant NN as "Mask R-CNN (PyTorch)"
+
+CONS -> UI : Select exhibit image & click “Run Detection”
+UI -> API : POST /predict (multipart image)
+API -> NN  : preprocess + forward(image)
+NN --> API : masks, boxes, scores
+API --> UI : JSON + preview_base64
+UI -> CONS : Render overlays + Defects Panel
+CONS -> UI : Adjust threshold/opacity\nFocus on defect\nExport CSV/JSON
+UI -> CONS : Saved report
+@enduml

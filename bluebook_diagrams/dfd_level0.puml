@@ -1,0 +1,16 @@
+@startuml
+skinparam backgroundColor #0b0f19
+skinparam componentStyle rectangle
+skinparam RectangleBackgroundColor #101a2f
+skinparam RectangleBorderColor #4b5563
+skinparam ArrowColor #93c5fd
+skinparam DefaultFontColor #e5e7eb
+title DFD Level 0 – Defective Exhibit Identification System (Context)
+
+actor "Conservator" as CONS
+rectangle "Defective Exhibit Identification System" as SYS {
+}
+
+CONS --> SYS : Upload Image\n(view results, export)
+SYS --> CONS : Detections (masks/boxes/scores)\nCSV/JSON report
+@enduml

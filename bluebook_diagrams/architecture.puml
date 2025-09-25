@@ -1,0 +1,38 @@
+@startuml
+skinparam backgroundColor #0b0f19
+skinparam componentBackgroundColor #101a2f
+skinparam componentBorderColor #4b5563
+skinparam ArrowColor #93c5fd
+skinparam DefaultFontColor #e5e7eb
+title System Architecture - AI-Based Automated Defective Exhibit Identification
+
+actor "User (Conservator / Engineer)" as USER
+
+rectangle "Web Client (React/Vite)" as WEB {
+  [Upload UI]
+  [Viewer + Overlays]
+  [Defects Panel]
+  [Exports]
+}
+
+rectangle "Backend (FastAPI)" as API {
+  [POST /predict]
+  [Image Preprocess]
+  [Response Builder]
+}
+
+rectangle "Model Layer (PyTorch)" as ML {
+  [Mask R-CNN]
+  [Weights: maskrcnn_defect.pth]
+  [Postprocess: polygons]
+}
+
+database "Reports / Downloads" as STORE
+
+USER --> WEB : Drag & drop image\nAdjust threshold/opacity
+WEB --> API : HTTP POST\nmultipart image
+API --> ML : Tensor conversion\ninference()
+ML --> API : boxes, masks, scores
+API --> WEB : JSON + preview_base64
+WEB --> STORE : CSV / JSON exports
+@enduml

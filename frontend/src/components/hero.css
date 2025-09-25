@@ -1,0 +1,99 @@
+:root{
+  --ink: #0a0f1a;
+  --line: rgba(255,255,255,.12);
+  --acc-1: #6e8aff;
+  --acc-2: #34d3c7;
+  --accent-grad: linear-gradient(90deg, var(--acc-1) 0%, var(--acc-2) 100%);
+}
+
+.hero{
+  position: relative;
+  min-height: 66vh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+}
+
+/* backdrop */
+.bg-grad{
+  position: absolute; inset: -20% -10% 0 -10%;
+  background:
+    radial-gradient(60% 60% at 30% 20%, #1a2140 0%, transparent 60%),
+    radial-gradient(50% 50% at 70% 30%, #1a3838 0%, transparent 60%),
+    linear-gradient(135deg, #0b1020, #0a0f1a 60%);
+  filter: saturate(115%);
+  animation: drift 24s ease-in-out infinite alternate;
+  transform: translateZ(0);
+}
+@keyframes drift { from { transform: translateY(-2%) scale(1.03);} to { transform: translateY(2%) scale(1.06);} }
+
+/* soft grain */
+.grain{
+  position:absolute; inset:-100px;
+  opacity:.06; pointer-events:none;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.35) 0 1px, transparent 1px 2px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.35) 0 1px, transparent 1px 2px);
+  mix-blend-mode: soft-light;
+}
+
+/* blobs */
+.blob{
+  position:absolute; width:520px; height:520px; border-radius:50%;
+  filter: blur(40px) saturate(110%); opacity:.30; pointer-events:none;
+}
+.blob-a{ background: #5c6bd6; right:-120px; top:-60px; animation: floatA 18s ease-in-out infinite; }
+.blob-b{ background: #1cb6aa; left:-140px; bottom:-160px; animation: floatB 22s ease-in-out infinite; }
+@keyframes floatA { 0%{transform:translate(0,0)} 50%{transform:translate(-10px,10px)} 100%{transform:translate(0,0)} }
+@keyframes floatB { 0%{transform:translate(0,0)} 50%{transform:translate(14px,-12px)} 100%{transform:translate(0,0)} }
+
+/* glass nav */
+.glass{ border:1px solid var(--line); background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); }
+.nav{
+  position:absolute; top:18px; left:50%; transform: translateX(-50%);
+  width:min(1100px, 92vw); display:flex; align-items:center; justify-content:space-between;
+  padding:10px 14px; border-radius:14px;
+}
+.brand{ display:flex; align-items:center; gap:10px; color:#e8eef9; font-weight:700; letter-spacing:.2px; font-family: Inter, system-ui, sans-serif; }
+.logo{ width:18px; height:18px; border-radius:6px; background: conic-gradient(var(--acc-1), var(--acc-2), var(--acc-1)); box-shadow: 0 0 0 2px rgba(0,0,0,.15) inset; }
+.brand-name{ font-size:14px; }
+.nav-right{ display:flex; gap:8px; }
+.chip{ font: 600 12px Inter, system-ui; color:#cfe1ff; border:1px solid var(--line); padding:4px 8px; border-radius:999px; background: rgba(255,255,255,.04); }
+
+/* hero content */
+.hero-inner{
+  position: relative;
+  width:min(1100px, 92vw);
+  padding: 120px 0 70px;
+  text-align: center;
+  color:#eaf2ff;
+}
+.title{
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(34px, 6vw, 56px);
+  font-weight: 700; line-height: 1.05; letter-spacing: .2px;
+}
+.underline{ background-image: var(--accent-grad); background-clip: text; -webkit-background-clip: text; color: transparent; }
+.subtitle{
+  margin: 14px auto 0; max-width: 860px; color:#b7c6dc; line-height: 1.6;
+  font: 500 clamp(14px, 1.6vw, 18px) Inter, system-ui, sans-serif;
+}
+.cta{ display:flex; justify-content:center; gap:12px; margin: 22px 0 10px; }
+.btn{ padding: 12px 18px; border-radius: 12px; border:1px solid var(--line); color:#e6f0ff; background: rgba(255,255,255,.04); cursor:pointer; transition: transform .12s ease, background .2s ease, border-color .2s ease; font: 700 14px Inter, system-ui, sans-serif; }
+.btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.18); }
+.btn.primary{ background: var(--accent-grad); color:#061019; border-color: transparent; }
+.btn.ghost{ background: rgba(255,255,255,.06); }
+
+.stats{
+  margin: 22px auto 0; display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;
+  padding:10px; border-radius:14px; border:1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  color:#cfe1ff; font: 500 13px Inter, system-ui, sans-serif;
+}
+.stats b{ color:#ffffff; }
+
+@media (max-width: 720px){
+  .stats{ grid-template-columns: 1fr; }
+  .nav-right{ display:none; }
+}

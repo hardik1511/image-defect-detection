@@ -1,0 +1,28 @@
+@startuml
+skinparam backgroundColor #0b0f19
+skinparam usecase { BackgroundColor #101a2f; BorderColor #4b5563; FontColor #e5e7eb }
+skinparam actor   { BackgroundColor #0b1220; BorderColor #64748b; FontColor #e5e7eb }
+left to right direction
+title Use Case 1 – Detect Micro-Cracks (Industrial)
+
+actor "Quality Control Engineer" as QC
+rectangle "Defect Detection System" {
+  (UC1.1 Upload component image) as A1
+  (UC1.2 Run Mask R-CNN inference) as A2
+  (UC1.3 View cracks with masks/boxes) as A3
+  (UC1.4 Focus zoom on a crack) as A4
+  (UC1.5 Export CSV/JSON) as A5
+  (UC1.6 Adjust threshold/opacity) as A6
+}
+
+QC -- A1
+QC -- A3
+QC -- A4
+QC -- A5
+QC -- A6
+A1 --> A2
+A2 --> A3
+A3 .> A4 : <<extend>>
+A3 .> A6 : <<extend>>
+A3 .> A5 : <<extend>>
+@enduml
