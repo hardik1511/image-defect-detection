@@ -14,17 +14,35 @@ st.set_page_config(
     layout="wide"
 )
 
-# Simple model loading
+# Model loading with proper architecture
 @st.cache_resource
 def load_model():
     """Load a simple model for defect detection"""
     try:
+        device = torch.device("cpu")  # Use CPU for Hugging Face
+        
         # Try to load custom model first
         if os.path.exists("maskrcnn_defect.pth"):
-            device = torch.device("cpu")  # Use CPU for Hugging Face
+            # Build model with correct architecture for 2 classes
             model = torchvision.models.detection.maskrcnn_resnet50_fpn(weights=None)
+            
+            # Modify the model for 2 classes (background + defect)
+            from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
+            from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
+            
+            # Get number of input features for the classifier
+            in_features = model.roi_heads.box_predictor.cls_score.in_features
+            # Replace the pre-trained head with a new one for 2 classes
+            model.roi_heads.box_predictor = FastRCNNPredictor(in_features, 2)
+            
+            # Get number of input features for the mask classifier
+            in_features_mask = model.roi_heads.mask_predictor.conv5_mask.in_channels
+            # Replace the pre-trained head with a new one for 2 classes
+            model.roi_heads.mask_predictor = MaskRCNNPredictor(in_features_mask, 256, 2)
+            
+            # Load the custom weights
             state = torch.load("maskrcnn_defect.pth", map_location="cpu")
-            model.load_state_dict(state, strict=False)
+            model.load_state_dict(state, strict=True)
             model.eval()
             return model, device
         else:
@@ -52,8 +70,9 @@ def detect_defects(image, model, device, confidence=0.5):
         scores = outputs['scores'].cpu().numpy()
         labels = outputs['labels'].cpu().numpy()
         
-        # Filter by confidence
-        keep = scores >= confidence
+        # Filter by confidence and only keep defect detections (label == 1)
+        # Label 0 is background, label 1 is defect
+        keep = (scores >= confidence) & (labels == 1)
         filtered_boxes = boxes[keep]
         filtered_scores = scores[keep]
         filtered_labels = labels[keep]
