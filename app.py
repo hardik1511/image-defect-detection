@@ -23,28 +23,36 @@ def load_model():
         
         # Try to load custom model first
         if os.path.exists("maskrcnn_defect.pth"):
-            # Build model with correct architecture for 2 classes
-            model = torchvision.models.detection.maskrcnn_resnet50_fpn(weights=None)
-            
-            # Modify the model for 2 classes (background + defect)
-            from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
-            from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
-            
-            # Get number of input features for the classifier
-            in_features = model.roi_heads.box_predictor.cls_score.in_features
-            # Replace the pre-trained head with a new one for 2 classes
-            model.roi_heads.box_predictor = FastRCNNPredictor(in_features, 2)
-            
-            # Get number of input features for the mask classifier
-            in_features_mask = model.roi_heads.mask_predictor.conv5_mask.in_channels
-            # Replace the pre-trained head with a new one for 2 classes
-            model.roi_heads.mask_predictor = MaskRCNNPredictor(in_features_mask, 256, 2)
-            
-            # Load the custom weights
-            state = torch.load("maskrcnn_defect.pth", map_location="cpu")
-            model.load_state_dict(state, strict=True)
-            model.eval()
-            return model, device
+            try:
+                # Build model with correct architecture for 2 classes from the start
+                from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
+                from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
+                
+                # Create model with no pretrained weights
+                model = torchvision.models.detection.maskrcnn_resnet50_fpn(weights=None)
+                
+                # Get number of input features for the classifier
+                in_features = model.roi_heads.box_predictor.cls_score.in_features
+                # Replace the pre-trained head with a new one for 2 classes
+                model.roi_heads.box_predictor = FastRCNNPredictor(in_features, 2)
+                
+                # Get number of input features for the mask classifier
+                in_features_mask = model.roi_heads.mask_predictor.conv5_mask.in_channels
+                # Replace the pre-trained head with a new one for 2 classes
+                model.roi_heads.mask_predictor = MaskRCNNPredictor(in_features_mask, 256, 2)
+                
+                # Load the custom weights
+                state = torch.load("maskrcnn_defect.pth", map_location="cpu")
+                model.load_state_dict(state, strict=True)
+                model.eval()
+                return model, device
+            except Exception as custom_error:
+                st.warning(f"Custom model loading failed: {str(custom_error)}")
+                st.info("Falling back to pretrained COCO model...")
+                # Fallback to pretrained model
+                model = torchvision.models.detection.maskrcnn_resnet50_fpn(weights="DEFAULT")
+                model.eval()
+                return model, device
         else:
             # Fallback to pretrained model
             model = torchvision.models.detection.maskrcnn_resnet50_fpn(weights="DEFAULT")
@@ -70,9 +78,15 @@ def detect_defects(image, model, device, confidence=0.5):
         scores = outputs['scores'].cpu().numpy()
         labels = outputs['labels'].cpu().numpy()
         
-        # Filter by confidence and only keep defect detections (label == 1)
-        # Label 0 is background, label 1 is defect
-        keep = (scores >= confidence) & (labels == 1)
+        # Filter by confidence
+        keep = scores >= confidence
+        
+        # For custom model (2 classes): only keep defect detections (label == 1)
+        # For pretrained model (91 classes): keep all detections
+        if len(set(labels)) <= 2:  # Custom model with 2 classes
+            keep = keep & (labels == 1)  # Only defects
+        # For pretrained model, keep all detections above confidence threshold
+        
         filtered_boxes = boxes[keep]
         filtered_scores = scores[keep]
         filtered_labels = labels[keep]
