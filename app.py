@@ -9,10 +9,53 @@ import os
 
 # Page config
 st.set_page_config(
-    page_title="Image Defect Detection",
+    page_title="AI Defect Detection System",
     page_icon="🔍",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
+
+# Custom CSS for better styling
+st.markdown("""
+<style>
+    .main > div {
+        padding-top: 2rem;
+    }
+    .stApp {
+        background-color: #f8f9fa;
+    }
+    .stSuccess {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+    .stInfo {
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+    }
+    .stWarning {
+        background-color: #fff3cd;
+        border-color: #ffeaa7;
+    }
+    .stError {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+    .uploadedFile {
+        border: 2px dashed #1f77b4;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        background-color: #f8f9fa;
+    }
+    .metric-card {
+        background-color: white;
+        padding: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin: 0.5rem 0;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # Model loading with proper architecture
 @st.cache_resource
@@ -108,63 +151,117 @@ def draw_boxes(image, boxes, scores, labels):
 
 # Main app
 def main():
-    st.title("🔍 Image Defect Detection")
-    st.markdown("Upload an image to detect defects using AI")
+    # Header with better styling
+    st.markdown("""
+    <div style="text-align: center; padding: 2rem 0;">
+        <h1 style="color: #1f77b4; margin-bottom: 0.5rem;">🔍 AI Defect Detection System</h1>
+        <p style="color: #666; font-size: 1.1rem; margin-bottom: 2rem;">
+            Advanced computer vision for automated defect identification in museum exhibits
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    # Load model
-    with st.spinner("Loading AI model..."):
+    # Load model with better feedback
+    with st.spinner("🤖 Loading AI model..."):
         model, device = load_model()
     
     if model is None:
-        st.error("Failed to load model. Please check the model file.")
+        st.error("❌ Failed to load model. Please check the model file.")
         return
     
-    # File upload
-    uploaded_file = st.file_uploader(
-        "Choose an image file",
-        type=['jpg', 'jpeg', 'png'],
-        help="Upload an image to detect defects"
-    )
+    # Success message for model loading
+    st.success("✅ AI model loaded successfully!")
     
-    # Confidence slider
-    confidence = st.slider(
-        "Confidence Threshold",
-        min_value=0.1,
-        max_value=1.0,
-        value=0.5,
-        step=0.05
-    )
+    # Create two main columns
+    col1, col2 = st.columns([1, 1], gap="large")
     
-    if uploaded_file is not None:
-        # Load image
-        image = Image.open(uploaded_file).convert("RGB")
+    with col1:
+        st.markdown("### 📁 Upload Image")
+        uploaded_file = st.file_uploader(
+            "Choose an image file",
+            type=['jpg', 'jpeg', 'png'],
+            help="Upload an image to detect defects",
+            label_visibility="collapsed"
+        )
         
-        col1, col2 = st.columns(2)
+        # Confidence slider with better styling
+        st.markdown("### ⚙️ Detection Settings")
+        confidence = st.slider(
+            "Confidence Threshold",
+            min_value=0.1,
+            max_value=1.0,
+            value=0.5,
+            step=0.05,
+            help="Adjust sensitivity of defect detection. Higher values = more confident detections only."
+        )
         
-        with col1:
-            st.subheader("Original Image")
-            st.image(image, use_column_width=True)
-        
-        with col2:
-            st.subheader("Detection Results")
+        # Add some info about the system
+        with st.expander("ℹ️ About This System"):
+            st.markdown("""
+            **AI Defect Detection System**
             
-            # Run detection
-            with st.spinner("Analyzing image..."):
+            This system uses Mask R-CNN deep learning to automatically identify defects in museum exhibits and gallery artifacts.
+            
+            **Features:**
+            - Real-time defect detection
+            - Adjustable confidence threshold
+            - Visual bounding box overlays
+            - Detailed detection information
+            
+            **How to use:**
+            1. Upload an image file (JPG, PNG)
+            2. Adjust confidence threshold if needed
+            3. View detection results
+            4. Green boxes indicate detected defects
+            """)
+    
+    with col2:
+        st.markdown("### 🔍 Detection Results")
+        
+        if uploaded_file is not None:
+            # Load image
+            image = Image.open(uploaded_file).convert("RGB")
+            
+            # Show original image
+            st.markdown("**Original Image:**")
+            st.image(image, use_column_width=True)
+            
+            # Run detection with better feedback
+            with st.spinner("🔍 Analyzing image for defects..."):
                 boxes, scores, labels = detect_defects(image, model, device, confidence)
             
             if len(boxes) > 0:
-                st.success(f"Found {len(boxes)} defect(s)!")
+                # Success message with count
+                st.success(f"🎯 Found {len(boxes)} defect(s) with confidence ≥ {confidence:.2f}")
                 
                 # Draw results
                 result_image = draw_boxes(image, boxes, scores, labels)
+                st.markdown("**Detection Results:**")
                 st.image(result_image, use_column_width=True)
                 
-                # Show details
-                for i, (box, score, label) in enumerate(zip(boxes, scores, labels)):
-                    st.write(f"**Defect {i+1}:** Confidence: {score:.3f}")
+                # Show detailed results in an expandable section
+                with st.expander("📊 Detailed Detection Information"):
+                    for i, (box, score, label) in enumerate(zip(boxes, scores, labels)):
+                        st.markdown(f"""
+                        **Defect {i+1}:**
+                        - Confidence: {score:.3f}
+                        - Bounding Box: [{box[0]:.1f}, {box[1]:.1f}, {box[2]:.1f}, {box[3]:.1f}]
+                        - Label: {label}
+                        """)
             else:
-                st.info("No defects detected")
-                st.image(image, use_column_width=True)
+                st.info("ℹ️ No defects detected with current confidence threshold")
+                st.markdown("**Try adjusting the confidence threshold or upload a different image.**")
+        else:
+            st.info("👆 Upload an image to start defect detection")
+    
+    # Footer with additional information
+    st.markdown("---")
+    st.markdown("""
+    <div style="text-align: center; color: #666; padding: 1rem 0;">
+        <p>Built with ❤️ using Streamlit, PyTorch, and Hugging Face Spaces</p>
+        <p>AI Defect Detection System for Museum Applications</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
