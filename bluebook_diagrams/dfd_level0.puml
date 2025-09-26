@@ -5,12 +5,12 @@ skinparam RectangleBackgroundColor #101a2f
 skinparam RectangleBorderColor #4b5563
 skinparam ArrowColor #93c5fd
 skinparam DefaultFontColor #e5e7eb
-title DFD Level 0 – Defective Exhibit Identification System (Context)
+title DFD Level 0 – AI Defect Detection System (Hugging Face Spaces)
 
 actor "Conservator" as CONS
-rectangle "Defective Exhibit Identification System" as SYS {
+rectangle "Hugging Face Spaces\nAI Defect Detection System" as SYS {
 }
 
-CONS --> SYS : Upload Image\n(view results, export)
-SYS --> CONS : Detections (masks/boxes/scores)\nCSV/JSON report
+CONS --> SYS : Upload Image File\nAdjust Confidence Threshold
+SYS --> CONS : Detection Results\nBounding Boxes\nConfidence Scores\nDefect Details
 @enduml

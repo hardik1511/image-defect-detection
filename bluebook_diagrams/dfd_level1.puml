@@ -5,19 +5,17 @@ skinparam RectangleBackgroundColor #101a2f
 skinparam RectangleBorderColor #4b5563
 skinparam ArrowColor #93c5fd
 skinparam DefaultFontColor #e5e7eb
-title DFD Level 1 – Core Data Flow
+title DFD Level 1 – Hugging Face Spaces Data Flow
 
 actor "Conservator" as CONS
-rectangle "React Frontend" as FE
-rectangle "FastAPI Backend" as BE
+rectangle "Streamlit Interface" as ST
 rectangle "Mask R-CNN Model" as NN
-database "Exports (CSV/JSON)" as DB
+database "Model Storage" as MODEL
 
-CONS --> FE : Upload Image
-FE --> BE : POST /predict (image)
-BE --> NN : Preprocess image
-NN --> BE : Detections (masks, boxes, scores)
-BE --> FE : JSON response\n+ preview image
-FE --> CONS : Overlays + Defects Panel
-FE --> DB : Save CSV/JSON
+CONS --> ST : Upload Image File
+ST --> ST : Load Model (Cached)
+ST --> NN : Preprocess Image\nConvert to Tensor
+NN --> ST : Bounding Boxes\nConfidence Scores\nDetection Results
+ST --> CONS : Display Results\nBounding Box Overlays\nDefect Information
+MODEL --> NN : Load Model Weights\n(maskrcnn_defect.pth)
 @enduml

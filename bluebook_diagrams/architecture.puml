@@ -8,31 +8,30 @@ title System Architecture - AI-Based Automated Defective Exhibit Identification
 
 actor "User (Conservator / Engineer)" as USER
 
-rectangle "Web Client (React/Vite)" as WEB {
-  [Upload UI]
-  [Viewer + Overlays]
-  [Defects Panel]
-  [Exports]
+rectangle "Hugging Face Spaces" as HF {
+  rectangle "Streamlit App" as ST {
+    [File Upload UI]
+    [Confidence Slider]
+    [Results Display]
+    [Detection Details]
+  }
+  
+  rectangle "Model Layer (PyTorch)" as ML {
+    [Mask R-CNN]
+    [Weights: maskrcnn_defect.pth]
+    [CPU Inference]
+  }
 }
 
-rectangle "Backend (FastAPI)" as API {
-  [POST /predict]
-  [Image Preprocess]
-  [Response Builder]
+database "Model Storage" as MODEL {
+  [maskrcnn_defect.pth]
+  [Requirements.txt]
+  [App.py]
 }
 
-rectangle "Model Layer (PyTorch)" as ML {
-  [Mask R-CNN]
-  [Weights: maskrcnn_defect.pth]
-  [Postprocess: polygons]
-}
-
-database "Reports / Downloads" as STORE
-
-USER --> WEB : Drag & drop image\nAdjust threshold/opacity
-WEB --> API : HTTP POST\nmultipart image
-API --> ML : Tensor conversion\ninference()
-ML --> API : boxes, masks, scores
-API --> WEB : JSON + preview_base64
-WEB --> STORE : CSV / JSON exports
+USER --> ST : Upload image file\nAdjust confidence threshold
+ST --> ML : Image preprocessing\nTensor conversion
+ML --> ST : Bounding boxes\nConfidence scores\nDetection results
+ST --> USER : Visual results\nDefect details\nBounding box overlays
+MODEL --> ML : Load model weights
 @enduml

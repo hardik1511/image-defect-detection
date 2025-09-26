@@ -2,13 +2,20 @@ Blue Book Visuals Package
 =========================
 
 Files included:
-- gantt_16w.png          : Gantt chart (16 weeks from 06 Jul 2025)
-- gantt_16w.mmd          : Mermaid Gantt source
-- sequence_diagram.puml  : PlantUML sequence diagram
-- dfd_level0.puml        : PlantUML DFD Level 0
-- dfd_level1.puml        : PlantUML DFD Level 1
-- architecture.puml      : PlantUML system architecture
-- screenshots_list.txt   : Suggested screenshots & captions
+- gantt_16w.png              : Gantt chart (16 weeks from 06 Jul 2025)
+- gantt_16w.mmd              : Mermaid Gantt source
+- sequence_diagram.puml      : PlantUML sequence diagram
+- dfd_level0.puml            : PlantUML DFD Level 0
+- dfd_level1.puml            : PlantUML DFD Level 1
+- architecture.puml          : PlantUML system architecture
+- deployment_architecture.puml: Hugging Face Spaces deployment diagram
+- screenshots_list.txt       : Suggested screenshots & captions
+
+Deployment Information:
+- DEPLOYMENT_GUIDE.md        : Comprehensive deployment documentation
+- Hugging Face Spaces        : Primary deployment platform
+- Streamlit Framework        : Web application framework
+- CPU-based inference        : Optimized for Hugging Face infrastructure
 
 Rendering tips:
 - PlantUML: Use VS Code PlantUML extension or plantuml.jar to export PNG/SVG.

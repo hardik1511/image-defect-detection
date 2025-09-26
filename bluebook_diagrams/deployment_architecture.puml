@@ -1,0 +1,45 @@
+@startuml
+skinparam backgroundColor #0b0f19
+skinparam componentBackgroundColor #101a2f
+skinparam componentBorderColor #4b5563
+skinparam ArrowColor #93c5fd
+skinparam DefaultFontColor #e5e7eb
+title Deployment Architecture - Hugging Face Spaces
+
+actor "User" as USER
+cloud "Hugging Face Spaces" as HF {
+  rectangle "Streamlit Application" as APP {
+    [File Upload Interface]
+    [Confidence Slider]
+    [Results Display]
+    [Detection Details Panel]
+  }
+  
+  rectangle "Model Runtime" as RUNTIME {
+    [PyTorch CPU Runtime]
+    [Mask R-CNN Model]
+    [Image Preprocessing]
+    [Inference Engine]
+  }
+  
+  database "Model Storage" as STORAGE {
+    [maskrcnn_defect.pth]
+    [Requirements.txt]
+    [App.py]
+    [README.md]
+  }
+}
+
+rectangle "Development Environment" as DEV {
+  [Local Testing]
+  [Model Training]
+  [Code Development]
+}
+
+USER --> APP : Upload Image\nAdjust Settings
+APP --> RUNTIME : Process Image\nRun Inference
+RUNTIME --> APP : Return Results\nBounding Boxes
+APP --> USER : Display Results\nVisual Overlays
+STORAGE --> RUNTIME : Load Model\nDependencies
+DEV --> STORAGE : Deploy Code\nUpload Model
+@enduml

@@ -6,19 +6,18 @@ skinparam ParticipantBorderColor #4b5563
 skinparam ParticipantFontColor #e5e7eb
 skinparam SequenceLifeLineBorderColor #64748b
 
-title Sequence – Manual Inspection Flow (Gallery Exhibit)
+title Sequence – AI Defect Detection Flow (Hugging Face Spaces)
 
 actor CONS as "Conservator"
-participant UI as "React UI"
-participant API as "FastAPI Backend"
-participant NN as "Mask R-CNN (PyTorch)"
+participant ST as "Streamlit App"
+participant ML as "Mask R-CNN Model"
+participant HF as "Hugging Face Spaces"
 
-CONS -> UI : Select exhibit image & click “Run Detection”
-UI -> API : POST /predict (multipart image)
-API -> NN  : preprocess + forward(image)
-NN --> API : masks, boxes, scores
-API --> UI : JSON + preview_base64
-UI -> CONS : Render overlays + Defects Panel
-CONS -> UI : Adjust threshold/opacity\nFocus on defect\nExport CSV/JSON
-UI -> CONS : Saved report
+CONS -> ST : Upload exhibit image file
+ST -> ST : Load model (cached)
+ST -> ML : Preprocess image\nConvert to tensor
+ML -> ST : Return bounding boxes\nConfidence scores\nDetection results
+ST -> CONS : Display original image\nShow detection results\nBounding box overlays
+CONS -> ST : Adjust confidence threshold\nView detection details
+ST -> CONS : Updated results\nDefect information
 @enduml
